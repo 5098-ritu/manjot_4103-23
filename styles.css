@@ -1,0 +1,339 @@
+/* General Body Styling */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #FAF5EF;
+    color: #3B3B3B;
+    font-size: 19px;
+    line-height: 1.8;
+}
+
+/* Navbar Styling */
+.navbar {
+    background-color: #5A3E2B;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    padding: 20px 0;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+}
+
+.navbar ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+.navbar li {
+    display: inline;
+    margin-right: 20px;
+}
+
+.navbar a {
+    color: #FAF5EF;
+    padding: 12px 24px;
+    text-decoration: none;
+    font-size: 1.2em;
+    font-weight: bold;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.navbar a:hover {
+    background-color: #C39063;
+    color: #FFFFFF;
+    text-decoration: underline;
+}
+
+/* Content Area Styling */
+.content {
+    margin: 110px auto;
+    padding: 35px;
+    max-width: 900px;
+    background-color: #FFFFFF;
+    border-radius: 10px;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.07);
+}
+
+/* Typography */
+h2, h3 {
+    color: #5A3E2B;
+}
+
+h2 {
+    font-size: 1.6em;
+    margin-bottom: 8px;
+}
+
+h3 {
+    text-align: center;
+    font-size: 1.7em;
+    margin-bottom: 18px;
+    margin-top: 3px;
+    
+}
+
+/* Paragraphs and Links */
+p {
+    font-size: 1.25em;
+    margin-bottom: 20px;
+}
+
+ul {
+    padding: 0;
+    margin: 0;
+    
+}
+
+ul li {
+    margin: 10px 0;
+text-align: left;
+}
+
+ul li a {
+    color: #5A3E2B;
+    font-size: 1.25em;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+ul li a:hover {
+    color: #C4622F;
+}
+
+/* Layout & Containers */
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 20px;
+    min-height: 60vh;
+}
+
+.container {
+    display: flex;
+    padding: 20px;
+    margin-top: 100px;
+    justify-content: space-between;
+}
+
+/* Layout change when program is selected */
+.container.program-open {
+    display: flex;
+    flex-direction: row;
+}
+
+.container.program-open .question-list {
+    flex: 1;
+    max-width: 40%;
+    overflow-y: auto;
+    border-right: 2px solid #c4a484;
+    padding-right: 10px;
+}
+
+.container.program-open .code-output-container {
+    flex: 2;
+    max-width: 60%;
+    display: flex;
+    flex-direction: column;
+    padding-left: 20px;
+}
+
+/* Question List */
+.question-list {
+    flex: 1;
+    padding: 20px;
+    background-color: #E2C8A5;
+    border-radius: 8px;
+    margin-right: 20px;
+    max-height: 85vh;
+    overflow-y: auto;
+    padding-right: 10px;
+    scrollbar-width: thin;
+    position: sticky;
+    top: 100px;
+    height: calc(100vh - 140px);
+ 
+
+
+}
+
+.question-list::-webkit-scrollbar-thumb {
+    background-color: #A67C52;
+    border-radius: 10px;
+}
+
+.question-list::-webkit-scrollbar-track {
+    background: #EFE5DC;
+}
+
+.question-list h2 {
+    text-align: center;
+    color: #9C6B44;
+}
+
+.question-list li a {
+    color: #2C160A;
+    cursor: pointer;
+}
+
+.question-list li a:hover {
+    color: #C4622F;
+}
+
+/* Question Buttons */
+.question {
+    cursor: pointer;
+    padding: 10px 15px;
+    background-color: #EAD2BA;
+    border: 1px solid #B88E6A;
+    border-radius: 6px;
+    color: #2E2E2E;
+    font-weight: 600;
+    margin: 10px 0;
+    transition: background 0.3s ease;
+}
+
+.question:hover {
+    background-color: #5A3E2B;
+    color: #FFFFFF;
+}
+
+/* Code & Output Section */
+.code-output-container {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+}
+
+.query-output-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 600px;
+    margin-bottom: 25px;
+}
+
+.code-container,
+.output-container {
+    background-color: #F4E8D8;
+    padding: 12px 16px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    margin-bottom: 10px;
+    color: #2A2A2A;
+    display: none;
+}
+
+/* Show selected */
+.code-container.show,
+.output-container.show {
+    display: block;
+}
+
+#output-container {
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    padding: 16px;
+    background-color: #fff4e6;
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
+pre {
+    background: #E0CBAF;
+    padding: 12px;
+    border-radius: 6px;
+    overflow: auto;
+    color: #2A2A2A;
+    font-size: 0.99em;
+    margin-top: 4px;
+    margin: 0;     
+}
+
+/* Link Box */
+.link-box {
+    background-color: #C39063;
+    padding: 18px 28px;
+    border-radius: 8px;
+    text-align: center;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.link-box a {
+    color: #FFFFFF;
+    text-decoration: none;
+    font-size: 1.4em;
+    font-weight: bold;
+}
+
+.link-box a:hover {
+    background-color: #5A3E2B;
+    color: #FFFFFF;
+    transform: scale(1.05);
+}
+
+/* Dropdown Menu */
+.dropdown-menu {
+    display: none;
+    padding-left: 20px;
+    margin-top: 5px;
+}
+
+.dropdown-menu li {
+    margin: 5px 0;
+}
+
+.dropdown-menu li a {
+    font-size: 18px;
+    color:#2C160A ;
+    text-decoration: none;
+}
+
+.dropdown-menu li a:hover {
+    color: #C4622F;
+}
+
+/* Sample Table Styling */
+.sample-tables {
+    padding: 20px;
+    background-color: #f5f0e1;
+    border-radius: 10px;
+    margin: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 16px;
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+.styled-table th,
+.styled-table td {
+    border: 1px solid #bfa980;
+    padding: 8px 12px;
+    background-color: #fff;
+}
+
+.styled-table th {
+    background-color: #d8c3a5;
+    font-weight: bold;
+}
+
+/* Footer */
+footer {
+    background-color: #5A3E2B;
+    text-align: center;
+    padding: 15px 0;
+    color: #FFFFFF;
+    margin-top: 40px;
+}

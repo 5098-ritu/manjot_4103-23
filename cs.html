@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Ranking Case Study</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+
+/*
+    .collapsible-heading {
+  font-family: 'Arial', sans-serif;
+  font-weight: 600;
+}
+*/
+
+/* Add scrollable functionality to Marks table */
+.tables-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px; /* Adds space between the two tables */
+  margin-top: 20px;
+  flex-wrap: wrap; /* Makes tables responsive for smaller screens */
+}
+
+.table-container {
+  flex: 1; /* Makes each table take equal width */
+  max-width: 48%; /* Ensures tables are side by side */
+  margin-bottom: 20px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+table th, table td {
+  padding: 10px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+
+table th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}
+
+table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+table tr:hover {
+  background-color: #e2e2e2;
+}
+
+/* Marks Table Specific Styling */
+.marks-table {
+  margin-top: 20px;
+  overflow-x: auto; /* Enables horizontal scrolling */
+  max-height: 300px; /* Limits the height of the table */
+  overflow-y: auto; /* Enables vertical scrolling if content exceeds the max height */
+  display: block; /* Makes the table a block element to apply overflow */
+}
+
+.rank-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Arial', sans-serif;
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.rank-table th, .rank-table td {
+  padding: 8px 10px;  /* Reduced padding for compactness */
+  text-align: center;
+  border: 1px solid #ddd;
+  font-size: 14px;  /* Smaller font size for a more compact layout */
+}
+
+.rank-table th {
+  background-color: #d8c3a5;
+  color: white;
+  font-weight: bold;
+}
+
+.rank-table td {
+  background-color: #fff;
+}
+
+.rank-table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.rank-table tr:hover {
+  background-color: #f1f1f1;
+}
+
+.rank-table td:first-child {
+  font-weight: bold;
+}
+
+.rank-table td:last-child {
+  color: #d9534f; /* Red color for ranks */
+}
+
+
+
+    </style>
+
+</head>
+<body>
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="sql1.html">SQL Queries</a></li>
+      <li><a href="about.html">Submitted By</a></li>
+    </ul>
+  </nav>
+
+  <main class="content">
+    <!-- Title Section -->
+    <section class="section">
+      <h2>Title</h2>
+      <p><strong>Performance-Based Ranking of College Students in Multi-Course Programs</strong></p>
+    </section>
+
+    <!-- Objective Section -->
+    <section class="section">
+      <h2>Objective</h2>
+      <p>
+        To design and implement a database system that evaluates and ranks students based on their academic performance, per semester and per subject, across multiple professional courses in a college. The system filters out students who are absent or have failed (marks below 60%), and uses a tie-breaker based on aggregate marks.
+      </p>
+    </section>
+
+    <!-- Professional Courses Section -->
+    <section class="section">
+      <h2>Professional Courses Offered</h2>
+      
+        <p>C1 - B.Tech</p>
+        <p>C2 - MBA</p>
+<p>C3 - BCA</p>
+<p>C4 - BBA</p>
+<p>C5 - B.Sc</p>
+      
+    </section>
+
+    <!-- Database Schema Section -->
+    <section class="section">
+      <h2>Database Schema & Relationships</h2>
+      <p><strong>Courses Table:</strong> Contains details of all the courses.</p>
+      <p><strong>Students Table:</strong> Holds student data including enrolled course and semester.</p>
+      <p><strong>Subjects Table:</strong> Maps subjects to each course.</p>
+      <p><strong>Marks Table:</strong> Contains marks obtained by students per subject.</p>
+      <p>These tables are interlinked using CourseID, RollNo, and SubjectID.</p>
+
+      <pre>
+CREATE TABLE Courses (
+    CourseID VARCHAR(5) PRIMARY KEY,
+    CourseName VARCHAR(100)
+);
+
+CREATE TABLE Students (
+    RollNo NUMBER PRIMARY KEY,
+    Name VARCHAR(100),
+    CourseID VARCHAR(5),
+    Sem NUMBER,
+    FOREIGN KEY (CourseID) REFERENCES Courses(CourseID)
+);
+
+CREATE TABLE Subjects (
+    SubjectID VARCHAR(5) PRIMARY KEY,
+    SubjectName VARCHAR(100),
+    CourseID VARCHAR(5),
+    FOREIGN KEY (CourseID) REFERENCES Courses(CourseID)
+);
+
+CREATE TABLE Marks (
+    RollNo NUMBER,
+    SubjectID VARCHAR(5),
+    MarksObtained VARCHAR(5),
+    FOREIGN KEY (RollNo) REFERENCES Students(RollNo),
+    FOREIGN KEY (SubjectID) REFERENCES Subjects(SubjectID)
+);
+      </pre>
+    </section>
+
+    <!-- Ranking Conditions Section -->
+    <section class="ranking-conditions">
+      <h2>Subject-wise Ranking Conditions</h2>
+      <ul>
+        <li>A student must have at least 35 marks in each subject to pass.</li>
+        <li>No subject should be marked as ABSENT.</li>
+        <li>If there is a tie in marks for a subject, the student with the higher aggregate will be ranked higher.</li>
+        <li>If the aggregate marks are the same, both students will be ranked equally.</li>
+      </ul>
+
+      <h2>Semester-wise Ranking Conditions</h2>
+      <ul>
+        <li>A student must have 60% or more total marks for the semester to be selected for ranking.</li>
+        <li>Ranking is based on the total marks across all subjects.</li>
+        <li>If there is a tie in the total marks across all subjects, students will be ranked based on their aggregate marks.</li>
+        <li>If the aggregates are the same, both students will be ranked equally.</li>
+      </ul>
+    </section>
+
+    <!-- PL/SQL: Semester-Wise Ranking Section -->
+    <section class="section">
+      <h2>PL/SQL: Semester-Wise Ranking</h2>
+      <pre>
+SELECT
+    s.RollNo,
+    s.Name,
+    SUM(m.MarksObtained) AS TotalMarks,
+    AVG(m.MarksObtained) AS AggregateMarks,
+    RANK() OVER (ORDER BY SUM(m.MarksObtained) DESC, AVG(m.MarksObtained) DESC) AS Rank
+FROM
+    Students s
+JOIN
+    Marks m ON s.RollNo = m.RollNo
+GROUP BY
+    s.RollNo, s.Name
+HAVING
+    SUM(m.MarksObtained) >= 240
+ORDER BY
+    Rank;
+      </pre>
+    </section>
+
+    <!-- SQL: Subject-Wise Ranking Section -->
+    <section class="section">
+      <h2>SQL: Subject-Wise Ranking</h2>
+      <pre>
+SELECT 
+    SubjectID,
+    SubjectName,
+    RollNo,
+    MarksObtained,
+    Status,
+    Position
+FROM (
+    SELECT 
+        s.SubjectID,
+        s.SubjectName,
+        m.RollNo,
+        m.MarksObtained,
+        CASE
+            WHEN m.MarksObtained = 'A' THEN 'Absent'
+            WHEN TO_NUMBER(m.MarksObtained) < 30 THEN 'Fail'
+            ELSE 'Pass'
+        END AS Status,
+        -- Rank calculation based on marks and aggregate marks for tie-breaking
+        RANK() OVER (
+            PARTITION BY s.SubjectID
+            ORDER BY TO_NUMBER(m.MarksObtained) DESC, 
+                     SUM(TO_NUMBER(m1.MarksObtained)) DESC  -- Rank based on aggregate marks in case of tie
+        ) AS Position
+    FROM 
+        Marks m
+    JOIN 
+        Subjects s ON m.SubjectID = s.SubjectID
+    JOIN 
+        Students st ON m.RollNo = st.RollNo
+    LEFT JOIN 
+        Marks m1 ON m.RollNo = m1.RollNo AND m1.SubjectID = m.SubjectID -- Left join for aggregate marks
+    WHERE
+        st.Sem = 4  -- BCA Semester 4 students only
+        AND (m.MarksObtained != 'A' OR TO_NUMBER(m.MarksObtained) >= 30)
+    GROUP BY 
+        s.SubjectID,
+        s.SubjectName,
+        m.RollNo,
+        m.MarksObtained,
+        st.Sem
+) ranked
+WHERE 
+    Position <= 3  -- Only select positions 1, 2, and 3
+ORDER BY 
+    SubjectID,
+    Position;
+      </pre>
+    </section>
+<br><br>
+  <section class="section">
+<h2>Output (Semester  Ranking)</h2>  <!-- Sample Output (Semester Ranking) Section -->
+<table class="rank-table">
+  <thead>
+    <tr>
+      <th>ROLLNO</th>
+      <th>NAME</th>
+      <th>TOTALMARKS</th>
+      <th>AGGREGATEMARKS</th>
+      <th>RANK</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1001</td>
+      <td>Alice</td>
+      <td>341</td>
+      <td>85.25</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>1005</td>
+      <td>Eva</td>
+      <td>285</td>
+      <td>71.25</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <td>1004</td>
+      <td>David</td>
+      <td>285</td>
+      <td>71.25</td>
+      <td>2</td>
+    </tr>
+  </tbody>
+</table>
+</section>
+
+    <!-- Sample Output (Subject Ranking) Section -->
+    <section class="section">
+      <h2>Output (Subject Ranking)</h2>
+      <table class="rank-table">
+  <thead>
+    <tr>
+      <th>SUBJECTID</th>
+      <th>SUBJECTNAME</th>
+      <th>ROLLNO</th>
+      <th>MARKSOBTAINED</th>
+      <th>STATUS</th>
+      <th>POSITION</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>S1</td>
+      <td>DBMS</td>
+      <td>1001</td>
+      <td>85</td>
+      <td>Pass</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>S1</td>
+      <td>DBMS</td>
+      <td>1005</td>
+      <td>80</td>
+      <td>Pass</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <td>S1</td>
+      <td>DBMS</td>
+      <td>1004</td>
+      <td>80</td>
+      <td>Pass</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <td>S2</td>
+      <td>Operating Systems</td>
+      <td>1001</td>
+      <td>90</td>
+      <td>Pass</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>S2</td>
+      <td>Operating Systems</td>
+      <td>1004</td>
+      <td>70</td>
+      <td>Pass</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <td>S2</td>
+      <td>Operating Systems</td>
+      <td>1005</td>
+      <td>70</td>
+      <td>Pass</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <td>S3</td>
+      <td>Data Structures</td>
+      <td>1001</td>
+      <td>78</td>
+      <td>Pass</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>S3</td>
+      <td>Data Structures</td>
+      <td>1004</td>
+      <td>75</td>
+      <td>Pass</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <td>S3</td>
+      <td>Data Structures</td>
+      <td>1005</td>
+      <td>75</td>
+      <td>Pass</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <td>S4</td>
+      <td>Networking</td>
+      <td>1001</td>
+      <td>88</td>
+      <td>Pass</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>S4</td>
+      <td>Networking</td>
+      <td>1002</td>
+      <td>70</td>
+      <td>Pass</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <td>S4</td>
+      <td>Networking</td>
+      <td>1003</td>
+      <td>65</td>
+      <td>Pass</td>
+      <td>3</td>
+    </tr>
+  </tbody>
+</table>
+
+    </section>
+
+   <!-- Sample Output: Database Insertions Section -->
+<section class="section"><br><br>
+
+    <div class="content"><CENTER><h1>TABLE DATA</h1></CENTER>
+      <h3>Course Table</h3>
+      <table>
+        <tr><th>CourseID</th><th>CourseName</th></tr>
+        <tr><td>C1</td><td>BCA</td></tr>
+      </table>
+
+      <!-- Tables in one row using Flexbox -->
+      <div class="tables-row">
+        <!-- Students Table -->
+        <div>
+          <h3>Students Table</h3>
+          <table>
+            <tr><th>RollNo</th><th>Name</th><th>CourseID</th><th>Sem</th></tr>
+            <tr><td>1001</td><td>Alice</td><td>C1</td><td>4</td></tr>
+            <tr><td>1002</td><td>Bob</td><td>C1</td><td>4</td></tr>
+            <tr><td>1003</td><td>Charlie</td><td>C1</td><td>4</td></tr>
+            <tr><td>1004</td><td>David</td><td>C1</td><td>4</td></tr>
+            <tr><td>1005</td><td>Eva</td><td>C1</td><td>4</td></tr>
+          </table>
+        </div>
+        
+        
+        
+        
+        <div>
+        <h3>Subjects Table</h3>
+        <table>
+          <tr><th>SubjectID</th><th>SubjectName</th><th>CourseID</th></tr>
+          <tr><td>S1</td><td>DBMS</td><td>C1</td></tr>
+          <tr><td>S2</td><td>Operating Systems</td><td>C1</td></tr>
+          <tr><td>S3</td><td>Data Structures</td><td>C1</td></tr>
+          <tr><td>S4</td><td>Networking</td><td>C1</td></tr>
+        </table>
+      </div>
+
+    <br>    <!-- Marks Table -->
+      <!-- Marks Table -->
+<div>
+  <h3>Marks Table</h3>
+  <table class="marks-table">
+    <tr><th>RollNo</th><th>SubjectID</th><th>MarksObtained</th></tr>
+    <tr><td>1001</td><td>S1</td><td>85</td></tr>
+    <tr><td>1001</td><td>S2</td><td>90</td></tr>
+    <tr><td>1001</td><td>S3</td><td>78</td></tr>
+    <tr><td>1001</td><td>S4</td><td>88</td></tr>
+    <tr><td>1002</td><td>S1</td><td>78</td></tr>
+    <tr><td>1002</td><td>S2</td><td>29</td></tr>
+    <tr><td>1002</td><td>S3</td><td>60</td></tr>
+    <tr><td>1002</td><td>S4</td><td>70</td></tr>
+    <tr><td>1003</td><td>S1</td><td>50</td></tr>
+    <tr><td>1003</td><td>S2</td><td>55</td></tr>
+    <tr><td>1003</td><td>S3</td><td>60</td></tr>
+    <tr><td>1003</td><td>S4</td><td>65</td></tr>
+    <tr><td>1004</td><td>S1</td><td>80</td></tr>
+    <tr><td>1004</td><td>S2</td><td>70</td></tr>
+    <tr><td>1004</td><td>S3</td><td>75</td></tr>
+    <tr><td>1004</td><td>S4</td><td>60</td></tr>
+    <tr><td>1005</td><td>S1</td><td>80</td></tr>
+    <tr><td>1005</td><td>S2</td><td>70</td></tr>
+    <tr><td>1005</td><td>S3</td><td>75</td></tr>
+    <tr><td>1005</td><td>S4</td><td>60</td></tr>
+  </table>
+</div>
+
+      </div>
+      
+    </div>
+  </section>
+
+  <script>
+    // Collapsible Heading Functionality
+    var coll = document.getElementsByClassName("collapsible-heading");
+    for (var i = 0; i < coll.length; i++) {
+      coll[i].addEventListener("click", function() {
+        this.classList.toggle("active");
+        var content = this.nextElementSibling;
+        if (content.style.display === "block") {
+          content.style.display = "none";
+        } else {
+          content.style.display = "block";
+        }
+      });
+    }
+  </script>
+
+
+  </main>
+  
+  <!-- Footer -->
+  
+  
+</body>
+</html>

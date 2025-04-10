@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SQL Join Queries</title>
+  <link rel="stylesheet" href="styles.css" />
+<script>
+  function showProgram(questionNumber) {
+    // Hide all code and output containers
+    document.querySelectorAll('.code-container, .output-container').forEach((el) => {
+      el.style.display = 'none';
+    });
+
+    // Show selected code/output
+    document.getElementById('code' + questionNumber).style.display = 'block';
+    document.getElementById('output' + questionNumber).style.display = 'block';
+    document.getElementById('output-container').style.display = 'flex';
+
+    // Show sample tables only for Join queries (1 to 6)
+    if (questionNumber >= 1 && questionNumber <= 6) {
+      document.getElementById('sample-table').style.display = 'block';
+    } else {
+      document.getElementById('sample-table').style.display = 'none';
+    }
+  }
+
+  function toggleDropdown(dropdownId) {
+    var dropdown = document.getElementById(dropdownId);
+    dropdown.style.display = (dropdown.style.display === 'block') ? 'none' : 'block';
+  }
+</script>
+
+</head>
+<body>
+  <nav class="navbar">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="topic.html">Queries</a></li>
+    <li><a href="about.html">Submitted By</a></li>
+  </nav>
+
+  <div class="container">
+    <div class="question-list">
+      <h2>SQL Queries:<br>Executed in MySQL</h2>
+      <h3>Querying Multiple Tables Using Joins</h3>
+      <ul>
+        <li>
+          <a href="#" onclick="toggleDropdown('dropdownMenu1')">1. JOINS</a>
+          <ul id="dropdownMenu1" class="dropdown-menu">
+            <li><a href="#" onclick="showProgram(1)">a) Equi Join (Inner Join)</a></li>
+            <li><a href="#" onclick="showProgram(2)">b) Cross Join</a></li>
+            <li>
+              <a href="#" onclick="toggleDropdown('dropdownMenu2')">c) Outer Joins</a>
+              <ul id="dropdownMenu2" class="dropdown-menu">
+                <li><a href="#" onclick="showProgram(3)">1. Left Outer Join</a></li>
+                <li><a href="#" onclick="showProgram(4)">2. Right Outer Join</a></li>
+                <li><a href="#" onclick="showProgram(5)">3. Full Outer Join</a></li>
+              </ul>
+            </li>
+            <li><a href="#" onclick="showProgram(6)">d) Self Join</a></li>
+          </ul>
+        </li>
+      </ul>
+        <h3>NESTED QUERIES</h3>
+              <ul>  <li>
+                    <a href="#" onclick="toggleDropdown('dropdownMenu3')">Nested Query</a>
+                    <ul id="dropdownMenu3" class="dropdown-menu">
+                        <li><a href="#" onclick="showProgram(7)">1. Single-row Subquery</a></li>
+                        <li><a href="#" onclick="showProgram(8)">2. Multi-row Subquery</a></li>
+                        </ul>
+                  </li></ul>
+    </div>
+
+ <div class="sample-tables" id="sample-table" style="display: none;">
+  <h2>Sample Tables</h2>
+
+  <h3>Students Table</h3>
+  <table class="styled-table">
+    <thead>
+      <tr>
+        <th>RollNo</th>
+        <th>Name</th>
+        <th>CourseID</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>4100</td><td>Lucky</td><td>C1</td></tr>
+      <tr><td>4102</td><td>Ajay</td><td>C2</td></tr>
+      <tr><td>4103</td><td>Mahi</td><td>C3</td></tr>
+      <tr><td>4104</td><td>Neha</td><td>NULL</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Courses Table</h3>
+  <table class="styled-table">
+    <thead>
+      <tr>
+        <th>CourseID</th>
+        <th>CourseName</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>C1</td><td>Computer Sci</td></tr>
+      <tr><td>C2</td><td>Mathematics</td></tr>
+      <tr><td>C4</td><td>Physics</td></tr>
+    </tbody>
+  </table>
+</div>
+
+
+    <div class="code-output-container" id="output-container">
+
+      <!-- 1. Equi Join -->
+      <div class="code-container" id="code1">
+        <h2>Equi Join (Inner Join)</h2>
+<pre><code>SELECT Students.Name, Courses.CourseName
+FROM Students
+INNER JOIN Courses
+ON Students.CourseID = Courses.CourseID;
+
+
+</code></pre>
+      </div>
+      <div class="output-container" id="output1">
+        <h2>Output</h2><pre>
++-------+--------------+
+| Name  | CourseName   |
++-------+--------------+
+| Lucky | Computer Sci |
+| Ajay  | Mathematics  |
++-------+--------------+
+2 rows in set (0.00 sec)
+        </pre>
+        </div>
+
+      <!-- 2. Cross Join -->
+      <div class="code-container" id="code2">
+        <h2>Cross Join</h2>
+<pre><code>SELECT Students.Name, Courses.CourseName
+FROM Students
+CROSS JOIN Courses;
+</code></pre></div>
+        <div class="output-container" id="output2">
+    <h2>Output</h2>
+    <pre><code>
+
++-------+--------------+
+| Name  | CourseName   |
++-------+--------------+
+| Lucky | Computer Sci |
+| Lucky | Mathematics  |
+| Lucky | Physics      |
+| Ajay  | Computer Sci |
+| Ajay  | Mathematics  |
+| Ajay  | Physics      |
+| Mahi  | Computer Sci |
+| Mahi  | Mathematics  |
+| Mahi  | Physics      |
+| Neha  | Computer Sci |
+| Neha  | Mathematics  |
+| Neha  | Physics      |
++-------+--------------+
+12 rows in set (0.00 sec)
+        
+    </code></pre>
+</div>
+     
+        
+
+      <!-- 3. Left Outer Join -->
+      <div class="code-container" id="code3">
+        <h2>Left Outer Join</h2>
+<pre><code>SELECT Students.Name, Courses.CourseName
+FROM Students
+LEFT JOIN Courses
+ON Students.CourseID = Courses.CourseID;
+
+</code></pre>
+      </div>
+      <div class="output-container" id="output3">
+          <h2>Output</h2>
+        <code><pre>
++-------+--------------+
+| Name  | CourseName   |
++-------+--------------+
+| Lucky | Computer Sci |
+| Ajay  | Mathematics  |
+| Mahi  | NULL         |
+| Neha  | NULL         |
++-------+--------------+
+4 rows in set (0.00 sec)
+        </pre></code></div>
+
+      <!-- 4. Right Outer Join -->
+      <div class="code-container" id="code4">
+        <h2>Right Outer Join</h2>
+<pre><code>SELECT Students.Name, Courses.CourseName
+FROM Students
+RIGHT JOIN Courses
+ON Students.CourseID = Courses.CourseID;
+
+
+</code></pre>
+      </div>
+      <div class="output-container" id="output4">
+          <h2>Output</h2>
+        <code><pre>
+        
++-------+--------------+
+| Name  | CourseName   |
++-------+--------------+
+| Lucky | Computer Sci |
+| Ajay  | Mathematics  |
+| NULL  | Physics      |
++-------+--------------+
+3 rows in set (0.00 sec)
+        
+        </pre></code>
+        </div>
+
+      <!-- 5. Full Outer Join -->
+      <div class="code-container" id="code5">
+        <h2>Full Outer Join</h2>
+<pre><code>SELECT Students.Name, Courses.CourseName
+FROM Students
+FULL OUTER JOIN Courses
+ON Students.CourseID = Courses.CourseID;
+
+
+</code></pre>
+      </div>
+      <div class="output-container" id="output5">
+        <h2>Output</h2>
+        <code><pre>
++-------+--------------+
+| Name  | CourseName   |
++-------+--------------+
+| Lucky | Computer Sci |
+| Ajay  | Mathematics  |
+| Mahi  | NULL         |
+| Neha  | NULL         |
+| NULL  | Physics      |
++-------+--------------+
+5 rows in set (0.00 sec)
+        </pre></code>
+        </div>
+
+      <!-- 6. Self Join -->
+      <div class="code-container" id="code6">
+        <h2>Self Join</h2>
+<pre><code>
+SELECT A.Name AS Student1, B.Name AS Student2
+FROM Students A, Students B
+WHERE A.CourseID = B.CourseID AND A.RollNo != B.RollNo;
+
+
+</code></pre>
+      </div>
+      <div class="output-container" id="output6">
+        <h2>Output</h2>
+          <code><pre>
++----------+----------+
+| Student1 | Student2 |
++----------+----------+
+| (no matching rows) |
++----------+----------+
+0 rows in set (0.00 sec)
+
+
+          </pre></code></div>
+        
+        <!-- Single-row Subquery -->
+<div class="code-container" id="code7">
+    <h2>Query</h2>
+    <h4>Single-row Subquery</h4>
+    <pre><code>
+Syntax:
+SELECT column_name
+FROM table_name
+WHERE column_name = (SELECT column_name FROM another_table WHERE condition);
+
+Ex:
+mysql> SELECT name FROM employees
+       WHERE salary = (SELECT MAX(salary) FROM employees);
+    </code></pre>
+</div>
+<div class="output-container" id="output7">
+    <h2>Output</h2>
+    <pre><code>
++------------+
+| name       |
++------------+
+| John Smith |
++------------+
+1 row in set (0.02 sec)
+    </code></pre>
+</div>
+
+<!-- Multi-row Subquery -->
+<div class="code-container" id="code8">
+    <h2>Query</h2>
+    <h4>Multi-row Subquery</h4>
+    <pre><code>
+Syntax:
+SELECT column_name
+FROM table_name
+WHERE column_name IN 
+(SELECT column_name FROM another_table WHERE condition);
+
+Ex:
+mysql> SELECT name FROM employees
+WHERE department_id IN
+(SELECT department_id FROM departments WHERE location = 'New York');
+    </code></pre>
+</div>
+<div class="output-container" id="output8">
+    <h2>Output</h2>
+    <pre><code>
++------------+
+| name       |
++------------+
+| Jane Doe   |
+| Alice Lee  |
++------------+
+2 rows in set (0.01 sec)
+    </code></pre>
+</div>
+      </div></div>
+        
+</body>
+</html>
